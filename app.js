@@ -1,23 +1,19 @@
 const express = require('express');
 const app = express();
+const path = require('path');
+const rootDir = require('./util/path');
+
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
 app.use(express.urlencoded({extended: false}));
+app.use(express.static(path.join(rootDir, 'public')));
 
-app.use('/', (req, res, next) => {
-    next();
-});
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
 
-app.use('/add-product', (req, res, next) => {
-    res.send('<html><form action="/product" method="POST"><input type="text" name="title"><button type="submit">Add Product</button></form></html>');
-});
-
-app.use('/product', (req, res, next) => {
-    console.log(req.body);
-    res.redirect('/');
-});
-
-app.use('/', (req, res, next) => {
-    res.send('<html>Express Server here</html>');
+app.use((req, res, next) => {
+    res.status(404).sendFile(path.join(rootDir, 'views', '404.html'));
 });
 
 app.listen(3000,() => {
