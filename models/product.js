@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const rootDir = require('../util/path');
 
+const Cart = require('./cart');
+
 const pathDisk = path.join(rootDir, 'data', 'products.json');
 
 const getProductsFromFile = (cb) => {
@@ -37,12 +39,23 @@ module.exports = class Product {
                     console.log(err);
                 });
             } else {
-                this.id = Math.random().toString();
+                this.id = Math.floor(Math.random().toString() *10000);
                 products.push(this);
-                fs.writeFile(pathDisk, JSON.stringify(products), err => {
-                    console.log(err);
-                });
+                fs.writeFile(pathDisk, JSON.stringify(products), 
+                    err => console.log(err));
             }
+        });
+    }
+
+    static deleteById(id) {        
+        getProductsFromFile(products => {
+            const product = products.find(prod => prod.id === id);
+            const productsUpdated = products.filter(p => p.id !== id);
+            fs.writeFile(pathDisk, JSON.stringify(productsUpdated), err => {
+                if (!err) {
+                    Cart.deleteProduct(id, product.price);
+                }
+            });
         });
     }
 
