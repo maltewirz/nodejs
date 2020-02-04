@@ -41,13 +41,12 @@ module.exports = class Cart {
             if (err) {
                 return
             }
-            const updatedCart = { ...JSON.parse(cart) };
-            console.log("updatedCart",updatedCart);
-            
+            const updatedCart = { ...JSON.parse(cart) };            
             const product = updatedCart.products.findIndex(
-                prod => prod.id === id);
-            console.log("product",product);
-            
+                prod => prod.id === id);            
+            if (!product) {
+                return;
+            }
             const productQty = product.qty;
 
             updatedCart.products = updatedCart.products.filter(
@@ -57,6 +56,17 @@ module.exports = class Cart {
             fs.writeFile(pathDisk, JSON.stringify(updatedCart), err => {
                 console.log(err);
             });
+        });
+    }
+
+    static getCart(cb) {
+        fs.readFile(pathDisk, (err, fileContent) => {
+            const cart = JSON.parse(fileContent);
+            if (err) {
+                cb(null);
+            } else {
+                cb(cart);
+            }
         });
     }
 };

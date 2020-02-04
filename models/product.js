@@ -39,7 +39,7 @@ module.exports = class Product {
                     console.log(err);
                 });
             } else {
-                this.id = Math.floor(Math.random().toString() *10000);
+                this.id = Math.floor(Math.random() *10000).toString();
                 products.push(this);
                 fs.writeFile(pathDisk, JSON.stringify(products), 
                     err => console.log(err));
