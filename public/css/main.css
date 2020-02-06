@@ -165,6 +165,15 @@ form {
   width: 100%;
 }
 
+.image {
+  /* max-width: 20rem; */
+}
+
+.image img {
+  height: 100%;
+
+}
+
 .card__actions {
   padding: 1rem;
   text-align: center;

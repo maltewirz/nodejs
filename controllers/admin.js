@@ -14,14 +14,20 @@ exports.postAddProduct = (req, res, next) => {
     const price = req.body.price;
     const description = req.body.description;
     const product = new Product(null, title, imageUrl, description, price);
-    console.log("save", product);
-    
-    product
-        .save()
-        .then(() => {
-            res.redirect('/');
+    Product
+        .create({
+            title: title,
+            price: price,
+            imageUrl: imageUrl,
+            description: description
         })
-        .catch(err => console.log(err));
+        .then(result => {
+            // console.log(result);
+            console.log('Created Product');
+            
+        }).catch(err => {
+            console.log(err);
+        });
 };
 
 exports.getEditProduct = (req, res, next) => {
@@ -62,11 +68,14 @@ exports.deleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll((products) => {
-        res.render('admin/products', {
-            prods: products, 
-            pageTitle: 'Admin Products', 
-            path: '/admin/products', 
+    Product.findAll()
+        .then(products => {
+            res.render('admin/products', {
+                prods: products, 
+                pageTitle: 'Admin Products', 
+                path: '/admin/products', 
+            });
+        }).catch(err => {
+            console.log(err);
         });
-    });
 };

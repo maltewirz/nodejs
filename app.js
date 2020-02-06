@@ -5,7 +5,7 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 const errorController = require('./controllers/error');
-const db = require('./util/database');
+const sequelize = require('./util/database');
 
 const path = require('path');
 const rootDir = require('./util/path');
@@ -21,7 +21,16 @@ app.use(shopRoutes);
 
 app.use(errorController.get404);
 
-app.listen(3000,() => {
-    console.log('Server listens');
-});
+sequelize.sync()
+    .then(result => {
+        // console.log(result);
+        app.listen(3000,() => {
+            console.log('Server listens');
+        });
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+
 
