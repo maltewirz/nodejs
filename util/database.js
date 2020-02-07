@@ -1,12 +1,5 @@
-const Sequelize = require('sequelize');
-const mysqlConfig = require('./mysqlConfig.js');
+const mongodb = require('mongodb');
+const MongoClient = mongodb.MongoClient;
+const dbCredentials = require('./dbCredentials');
 
-const sequelize = new Sequelize(
-    mysqlConfig.database, 
-    mysqlConfig.user, mysqlConfig.password,
-    {
-        dialect: 'mysql', 
-        host: 'localhost'
-    });
-
-module.exports = sequelize;
+MongoClient.connect(`mongodb+srv://${dbCredentials.user}:${dbCredentials.password}@cluster0-f8kmd.gcp.mongodb.net/test?retryWrites=true&w=majority`);
