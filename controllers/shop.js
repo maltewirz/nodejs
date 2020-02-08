@@ -61,8 +61,6 @@ exports.postCart = (req, res, next) => {
             return req.user.addToCart(product);
         })
         .then(result => {
-            console.log("here the results gogo",result);
-
             res.redirect('/cart');
         })
         .catch(err => console.log(err));
@@ -111,9 +109,7 @@ exports.postOrder= (req, res, next) => {
 exports.getOrders = (req, res, next) => {
     req.user
         .getOrders({include: ['products']})
-        .then(orders => {
-            console.log(orders);
-            
+        .then(orders => {            
             res.render('shop/orders', {
                 path: '/orders',
                 pageTitle: 'Your Orders',

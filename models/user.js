@@ -22,9 +22,13 @@ class User {
             });
     }
 
-    addToCart(product) {
+    addToCart(product) {        
         const cartProductIndex = this.cart.items.findIndex(cp => {
-            return cp.productId.toString() === product._id.toString();
+            // console.log("cp", Object.entries(cp).length);
+            if (Object.entries(cp).length >0) {
+                return cp.productId.toString() === product._id.toString();
+
+            }
         });
         let newQuantity = 1;
         const updatedCartItems = [...this.cart.items];
