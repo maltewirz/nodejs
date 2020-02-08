@@ -3,7 +3,7 @@ const getDb = require('../util/database').getDb;
 
 class User {
     constructor(username, email, cart, id) {
-        this.username = username;
+        this.name = username;
         this.email = email;    
         this.cart = cart; // {items: []}
         this._id = id;
@@ -62,7 +62,7 @@ class User {
         });
         return db
             .collection('products')
-            .find({ _id: {$in: productIds}})
+            .find({ _id: { $in: productIds }})
             .toArray()
             .then(products => {
                 return products.map(product => {
@@ -92,18 +92,37 @@ class User {
 
     addOrder() {
         const db = getDb();
-        return db
-            .collection('orders')
-            .insertOne(this.cart)
+        return this.getCart()
+            .then(products => {                
+                const order = {
+                    items: products,
+                    user: {
+                        _id: new mongodb.ObjectId(this._id),
+                        name: this.name
+                    }
+                };
+                return db
+                    .collection('orders')
+                    .insertOne(order)
+            })
             .then(result => {
-                this.cart = {items: []};
+                this.cart = { items: [] };
                 return db
                     .collection('users')
                     .updateOne(
                         { _id: new mongodb.ObjectId(this._id)}, 
-                        { $set: { cart: {items: [] } } }
+                        { $set: { cart: { items: [] } } }
                     );
             });
+    }
+
+    getOrders() {
+        const db = getDb();
+        return db
+            .collection('orders')
+            .find({'user._id': new mongodb.ObjectId(this._id) })
+            .toArray()
+
     }
 
 
