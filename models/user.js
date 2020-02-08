@@ -86,8 +86,24 @@ class User {
             .collection('users')
             .updateOne(
                 { _id: new mongodb.ObjectId(this._id)}, 
-                { $set: {cart: {items: updatedCartItems}} }
+                { $set: { cart: {items: updatedCartItems} } }
             );
+    }
+
+    addOrder() {
+        const db = getDb();
+        return db
+            .collection('orders')
+            .insertOne(this.cart)
+            .then(result => {
+                this.cart = {items: []};
+                return db
+                    .collection('users')
+                    .updateOne(
+                        { _id: new mongodb.ObjectId(this._id)}, 
+                        { $set: { cart: {items: [] } } }
+                    );
+            });
     }
 
 
