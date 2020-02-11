@@ -20,7 +20,7 @@ exports.postAddProduct = (req, res, next) => {
         price: price,
         description: description,
         imageUrl: imageUrl,
-        userId: req.session.user
+        userId: req.user
     });
     product
         .save()
@@ -96,8 +96,6 @@ exports.deleteProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {    
     Product.find()
-        // .select('title.price -_id')
-        // .populate('userId', 'name') populate related fields
         .then(products => {
             console.log(products);
             res.render('admin/products', {
