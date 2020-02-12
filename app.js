@@ -11,7 +11,7 @@ const flash =  require('connect-flash');
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
-const MONGODB_URI = `mongodb+srv://${secrets.mongoDbUser}:${secrets.mongoDbpassword}@cluster0-f8kmd.gcp.mongodb.net/shop`;
+const MONGODB_URI = `mongodb+srv://${secrets.mongoDbUser}:${secrets.mongoDbPassword}@cluster0-f8kmd.gcp.mongodb.net/shop`;
 
 const app = express();
 const store = new MongoDBStore({

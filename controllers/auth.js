@@ -4,7 +4,6 @@ const sendgridTransport = require('nodemailer-sendgrid-transport');
 const User = require('../models/user');
 const secrets = require('../util/secrets');
 
-
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
         api_key: secrets.sendGridKey
@@ -95,6 +94,16 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then(result => {
                     res.redirect('/login');
+                    return transporter
+                        .sendMail({
+                            to: email,
+                            from: 'shop@maltewirz.com',
+                            subject: 'Signup NodeJs',
+                            html: '<h1> You successfully signed up! </h1>'
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
                 });
         })
         .catch(err => {
