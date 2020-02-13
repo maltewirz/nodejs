@@ -21,11 +21,12 @@ router.post(
                 if (value === 'test@test.com') {
                     throw new Error('This email address is forbidden.');
                 }
+                return true;
             }),
-        // body('password',
-        //     'Please enter a password with text and at least 5 characters') // alternative syntax, only checking in body
-        //     .isLength({ min: 5})
-        //     .isAlphanumeric()
+        body('password',
+            'Please enter a password with text and at least 5 characters') // alternative syntax, only checking in body
+            .isLength({ min: 5})
+            .isAlphanumeric()
     ],
     authController.postSignup);
 
