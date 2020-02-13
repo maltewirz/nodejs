@@ -43,6 +43,14 @@ exports.getSignup = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).render('auth/login', {
+            path: '/signup',
+            pageTitle: 'Signup', 
+            errorMessage: errors.array()[0].msg
+        });
+    }
 
     User.findOne({ email: email })
         .then(user => {
@@ -76,7 +84,6 @@ exports.postLogin = (req, res, next) => {
 exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
-    const confirmPassword = req.body.confirmPassword;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {          
         return res.status(422).render('auth/signup', {
@@ -85,39 +92,28 @@ exports.postSignup = (req, res, next) => {
             errorMessage: errors.array()[0].msg
         });
     }
-    
-    User.findOne({email: email})
-        .then(userDoc => {
-            if (userDoc) {
-                req.flash('error', 'Email exists already.');
-                return res.redirect('/signup');
-            }
-            return bcrypt
-                .hash(password, 12)
-                .then(hashedPassword => {
-                    const user = new User({
-                        email: email,
-                        password: hashedPassword,
-                        cart: {items: []}
-                    });
-                    return user.save();
-                })
-                .then(result => {
-                    res.redirect('/login');
-                    return transporter
-                        .sendMail({
-                            to: email,
-                            from: 'shop@maltewirz.com',
-                            subject: 'Signup NodeJs',
-                            html: '<h1> You successfully signed up! </h1>'
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        });
-                });
+    bcrypt
+        .hash(password, 12)
+        .then(hashedPassword => {
+            const user = new User({
+                email: email,
+                password: hashedPassword,
+                cart: {items: []}
+            });
+            return user.save();
         })
-        .catch(err => {
-            console.log(err);
+        .then(result => {
+            res.redirect('/login');
+            return transporter
+                .sendMail({
+                    to: email,
+                    from: 'shop@maltewirz.com',
+                    subject: 'Signup NodeJs',
+                    html: '<h1> You successfully signed up! </h1>'
+                })
+                .catch(err => {
+                    console.log(err);
+                });
         });
 };
 
