@@ -14,10 +14,12 @@ router.post('/login',
     [
         check('email')
             .isEmail()
-            .withMessage('Please enter a valid email'),
+            .withMessage('Please enter a valid email')
+            .normalizeEmail(),
         check('password', 'Password length has to be more than 5 characters.')
             .isLength({ min: 5 })
             .isAlphanumeric()
+            .trim()
     ],
     authController.postLogin);
 
@@ -38,17 +40,21 @@ router.post(
                             return Promise.reject('Email already exists, please pick a different one.');
                         }
                     });
-            }),
+            })
+            .normalizeEmail(),
         body('password',
             'Please enter a password with text and at least 5 characters') // alternative syntax, only checking in body
             .isLength({ min: 5})
-            .isAlphanumeric(),
-        body('confirmPassword').custom((value, { req }) => {
-            if (value !== req.body.password) {
-                throw new Error('Passwords have to match');
-            }
-            return true;
-        })
+            .isAlphanumeric()
+            .trim(),
+        body('confirmPassword')
+            .trim()
+            .custom((value, { req }) => {
+                if (value !== req.body.password) {
+                    throw new Error('Passwords have to match');
+                }
+                return true;
+            })
     ],
     authController.postSignup);
 
