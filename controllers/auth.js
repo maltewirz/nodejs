@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport(sendgridTransport({
     }
 }));
 
-exports.getLogin = (req, res, next) => {
+exports.getLogin = (req, res) => {
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
@@ -31,7 +31,7 @@ exports.getLogin = (req, res, next) => {
     });
 };
 
-exports.getSignup = (req, res, next) => {
+exports.getSignup = (req, res) => {
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
@@ -51,7 +51,7 @@ exports.getSignup = (req, res, next) => {
     });
 };
 
-exports.postLogin = (req, res, next) => {
+exports.postLogin = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const errors = validationResult(req);
@@ -113,7 +113,7 @@ exports.postLogin = (req, res, next) => {
         });
 };
 
-exports.postSignup = (req, res, next) => {
+exports.postSignup = (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const errors = validationResult(req);
@@ -140,7 +140,7 @@ exports.postSignup = (req, res, next) => {
             });
             return user.save();
         })
-        .then(result => {
+        .then(() => {
             res.redirect('/login');
             return transporter
                 .sendMail({
@@ -156,14 +156,14 @@ exports.postSignup = (req, res, next) => {
 };
 
 
-exports.postLogout = (req, res, next) => {
+exports.postLogout = (req, res) => {
     req.session.destroy(err => {
         console.log(err);
         res.redirect('/');
     });
 };
 
-exports.getReset = (req, res, next) => {
+exports.getReset = (req, res) => {
     let message = req.flash('error');
     if (message.length > 0) {
         message = message[0];
@@ -177,7 +177,7 @@ exports.getReset = (req, res, next) => {
     });
 };
 
-exports.postReset = (req, res, next) => {
+exports.postReset = (req, res) => {
     crypto.randomBytes(32, (err,  buffer) => {
         if (err) {
             console.log(err);
@@ -194,7 +194,7 @@ exports.postReset = (req, res, next) => {
                 user.resetTokenExpiration = Date.now() + 3600000;
                 return user.save();
             })
-            .then(result => {
+            .then(() => {
                 res.redirect('/');
                 transporter
                     .sendMail({
@@ -217,7 +217,7 @@ exports.postReset = (req, res, next) => {
     });
 };
 
-exports.getNewPassword = (req, res, next) => {    
+exports.getNewPassword = (req, res) => {    
     const token = req.params.token;
     User.findOne({
         resetToken: token,
@@ -243,7 +243,7 @@ exports.getNewPassword = (req, res, next) => {
         });   
 };
 
-exports.postNewPassword = (req, res, next) => {
+exports.postNewPassword = (req, res) => {
     const newPassword = req.body.password;
     const userId = req.body.userId;
     const passwordToken = req.body.passwordToken;
@@ -264,7 +264,7 @@ exports.postNewPassword = (req, res, next) => {
             resetUser.resetTokenExpiration = undefined;
             return resetUser.save();
         })
-        .then(result => {
+        .then(() => {
             res.redirect('/login');
         })
         .catch(err => {
