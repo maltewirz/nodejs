@@ -51,7 +51,7 @@ exports.getSignup = (req, res) => {
     });
 };
 
-exports.postLogin = (req, res) => {
+exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const errors = validationResult(req);
@@ -105,15 +105,17 @@ exports.postLogin = (req, res) => {
                 })
                 .catch(err => {
                     console.log(err);
-                    res.redirect('login');
+                    res.redirect('/login');
                 });
         })
         .catch(err => {
-            console.log(err);
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 };
 
-exports.postSignup = (req, res) => {
+exports.postSignup = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
     const errors = validationResult(req);
@@ -150,7 +152,9 @@ exports.postSignup = (req, res) => {
                     html: '<h1> You successfully signed up! </h1>'
                 })
                 .catch(err => {
-                    console.log(err);
+                    const error = new Error(err);
+                    error.httpStatusCode = 500;
+                    return next(error);
                 });
         });
 };
@@ -177,7 +181,7 @@ exports.getReset = (req, res) => {
     });
 };
 
-exports.postReset = (req, res) => {
+exports.postReset = (req, res, next) => {
     crypto.randomBytes(32, (err,  buffer) => {
         if (err) {
             console.log(err);
@@ -211,13 +215,14 @@ exports.postReset = (req, res) => {
                     });
             })
             .catch(err => {
-                console.log(err);
-                
+                const error = new Error(err);
+                error.httpStatusCode = 500;
+                return next(error);
             });
     });
 };
 
-exports.getNewPassword = (req, res) => {    
+exports.getNewPassword = (req, res, next) => {    
     const token = req.params.token;
     User.findOne({
         resetToken: token,
@@ -239,11 +244,13 @@ exports.getNewPassword = (req, res) => {
             });
         })
         .catch(err => {
-            console.log(err);
-        });   
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+        });  
 };
 
-exports.postNewPassword = (req, res) => {
+exports.postNewPassword = (req, res, next) => {
     const newPassword = req.body.password;
     const userId = req.body.userId;
     const passwordToken = req.body.passwordToken;
@@ -268,8 +275,8 @@ exports.postNewPassword = (req, res) => {
             res.redirect('/login');
         })
         .catch(err => {
-            console.log(err);
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
-
-
 };
