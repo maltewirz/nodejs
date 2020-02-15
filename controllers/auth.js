@@ -256,7 +256,7 @@ exports.postNewPassword = (req, res) => {
     })
         .then(user => {
             resetUser = user;
-            return bcrypt.hash(newPassword, 12)
+            return bcrypt.hash(newPassword, 12);
         })
         .then(hashedPassword => {
             resetUser.password = hashedPassword;
