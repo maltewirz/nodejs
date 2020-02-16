@@ -23,12 +23,12 @@ const store = new MongoDBStore({
 });
 const csrfProtection = csrf();
 
-const storage = multer.diskStorage({
+const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'images/');
+        cb(null, 'images');
     },
     filename: (req, file, cb) => {        
-        cb('null', uuidv4()  + file.originalname);
+        cb(null, uuidv4() + '-' + file.originalname);
     }
 });
 
@@ -48,7 +48,7 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
 app.use(express.urlencoded({extended: false}));
-app.use(multer({storage: storage, fileFilter: fileFilter}).single('image'));
+app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
 app.use(express.static(path.join(rootDir, 'public')));
 app.use(session({ 
     secret: 'my test secret', 
@@ -90,9 +90,7 @@ app.get('/500', errorController.get500);
 
 app.use(errorController.get404);
 
-app.use((error, req, res, next) => {
-    console.log("here", error);
-    
+app.use((error, req, res, next) => {    
     res.status(500)
         .render('500', { 
             pageTitle: 'Error', 
