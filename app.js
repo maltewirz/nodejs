@@ -50,6 +50,7 @@ const authRoutes = require('./routes/auth');
 app.use(express.urlencoded({extended: false}));
 app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
 app.use(express.static(path.join(rootDir, 'public')));
+app.use('/images', express.static(path.join(rootDir, 'images')));
 app.use(session({ 
     secret: 'my test secret', 
     resave: false, 
